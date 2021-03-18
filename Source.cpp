@@ -233,8 +233,6 @@ void build_path(const Pair &dim,const Pair &start, const Pair &finish, Node **ma
 {
 	int i = finish.first;
 	int j = finish.second;
-	
-	
 	std::stack<char> s;
 	s.push('F');
 	maze[start.first][start.second] = 'S';
@@ -246,20 +244,32 @@ void build_path(const Pair &dim,const Pair &start, const Pair &finish, Node **ma
 		auto tempPrev = map[i][j].prevNode;
 
 		if (i > tempPrev.first)
+		{
 			maze[tempPrev.first][tempPrev.second] = 'D';
+			s.push('D');
+		}
 		else if (i < tempPrev.first)
+		{ 
 			maze[tempPrev.first][tempPrev.second] = 'U';
+			s.push('U');
+		}
 
 		if (j < tempPrev.second)
+		{ 
 			maze[tempPrev.first][tempPrev.second] = 'L';
+			s.push('L');
+		}
 		else if (j > tempPrev.second)
+		{ 
 			maze[tempPrev.first][tempPrev.second] = 'R';
-
+			s.push('R');
+		}
 		i = tempPrev.first;
 		j = tempPrev.second;
 	}
-
+	s.push('S');
 	std::cout << map[finish.first][finish.second].g << " steps" << std::endl;
+	std::cout << std::endl;
 
 	for (int i = 0; i < dim.first; i++)
 	{
@@ -269,7 +279,13 @@ void build_path(const Pair &dim,const Pair &start, const Pair &finish, Node **ma
 		}
 		std::cout << std::endl;
 	}
-
+	std::cout << std::endl;
+	while (!s.empty())
+	{
+		std::cout << s.top()<<" ";
+		s.pop();
+	}
+	std::cout <<std::endl;
 }
 
 
