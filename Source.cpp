@@ -4,6 +4,7 @@
 #include <vector>
 #include <queue>
 #include <tuple>
+#include <stack>
 #include <functional>
 
 typedef std::tuple<int, int, int> Tuple;
@@ -13,9 +14,9 @@ typedef  bool(*func_p)(const Tuple&, const Tuple&);
 struct Node
 {
 	Pair prevNode;
-	int f;
+	int f,g,h;
 	bool cheked;
-	Node() :f(-1), cheked(false)
+	Node() :f(-1), g(-1), h(-1), cheked(false)
 	{
 	}
 };
@@ -89,10 +90,13 @@ void a_star(std::string pathfile)
 	func_p myCompare = compare;
 	std::priority_queue<Tuple, std::vector<Tuple>, std::function<bool(Tuple, Tuple)>> openlist(std::ref(myCompare));
 
-	int i = start.first, j = start.second, f;
+	int i = start.first, j = start.second;
+	int newf, newh, newg;
 
 	map[i][j].prevNode = { i, j };
 	map[i][j].f = 0;
+	map[i][j].g = 0;
+	map[i][j].h = 0;
 	openlist.emplace(i, j, 0);
 
 	Pair neigbours;
@@ -102,12 +106,12 @@ void a_star(std::string pathfile)
 	{
 		while (!openlist.empty())
 		{
-			Tuple curr = openlist.top();
+			 Tuple curr = openlist.top();
 
 			openlist.pop();
 			i = std::get<0>(curr);
 			j = std::get<1>(curr);
-
+			
 			if (i == finish.first && j == finish.second)
 			{
 				build_path(dimension,start, finish, map, maze);
@@ -122,6 +126,7 @@ void a_star(std::string pathfile)
 				delete[] maze;
 				return;
 			}
+
 			map[i][j].cheked = true;
 
 			neigbours.first = i - 1;
@@ -130,14 +135,19 @@ void a_star(std::string pathfile)
 			if (valid_node(dimension, neigbours, maze) &&
 				map[neigbours.first][neigbours.second].cheked == false)
 			{
-				f = manhattan_distance(neigbours, finish);
+				newh = manhattan_distance(neigbours, finish);
+				newg = map[i][j].g + 1;
+				newf = newg + newh;
 
 				if (map[neigbours.first][neigbours.second].f == -1
-					|| map[neigbours.first][neigbours.second].f > f) {
+					|| map[neigbours.first][neigbours.second].f > newf) {
 
-					map[neigbours.first][neigbours.second].f = f;
+					openlist.emplace(neigbours.first, neigbours.second, newf);
+					map[neigbours.first][neigbours.second].g = newg;
+					map[neigbours.first][neigbours.second].h = newh;
+					map[neigbours.first][neigbours.second].f = newf;
 					map[neigbours.first][neigbours.second].prevNode = { i,j };
-					openlist.emplace(neigbours.first, neigbours.second, f);
+					
 				}
 			}
 
@@ -145,14 +155,18 @@ void a_star(std::string pathfile)
 			if (valid_node(dimension, neigbours, maze) &&
 				map[neigbours.first][neigbours.second].cheked == false)
 			{
-				f = manhattan_distance(neigbours, finish);
+				newh = manhattan_distance(neigbours, finish);
+				newg = map[i][j].g + 1;
+				newf = newg + newh;
 
 				if (map[neigbours.first][neigbours.second].f == -1
-					|| map[neigbours.first][neigbours.second].f > f) {
+					|| map[neigbours.first][neigbours.second].f > newf) {
 
-					map[neigbours.first][neigbours.second].f = f;
+					openlist.emplace(neigbours.first, neigbours.second, newf);
+					map[neigbours.first][neigbours.second].g = newg;
+					map[neigbours.first][neigbours.second].h = newh;
+					map[neigbours.first][neigbours.second].f = newf;
 					map[neigbours.first][neigbours.second].prevNode = { i,j };
-					openlist.emplace(neigbours.first, neigbours.second, f);
 				}
 			}
 
@@ -162,14 +176,18 @@ void a_star(std::string pathfile)
 			if (valid_node(dimension, neigbours, maze) &&
 				map[neigbours.first][neigbours.second].cheked == false)
 			{
-				f = manhattan_distance(neigbours, finish);
+				newh = manhattan_distance(neigbours, finish);
+				newg = map[i][j].g + 1;
+				newf = newg + newh;
 
 				if (map[neigbours.first][neigbours.second].f == -1
-					|| map[neigbours.first][neigbours.second].f > f) {
+					|| map[neigbours.first][neigbours.second].f > newf) {
 
-					map[neigbours.first][neigbours.second].f = f;
+					openlist.emplace(neigbours.first, neigbours.second, newf);
+					map[neigbours.first][neigbours.second].g = newg;
+					map[neigbours.first][neigbours.second].h = newh;
+					map[neigbours.first][neigbours.second].f = newf;
 					map[neigbours.first][neigbours.second].prevNode = { i,j };
-					openlist.emplace(neigbours.first, neigbours.second, f);
 				}
 			}
 
@@ -177,14 +195,18 @@ void a_star(std::string pathfile)
 			if (valid_node(dimension, neigbours, maze) &&
 				map[neigbours.first][neigbours.second].cheked == false)
 			{
-				f = manhattan_distance(neigbours, finish);
+				newh = manhattan_distance(neigbours, finish);
+				newg = map[i][j].g + 1;
+				newf = newg + newh;
 
 				if (map[neigbours.first][neigbours.second].f == -1
-					|| map[neigbours.first][neigbours.second].f > f) {
+					|| map[neigbours.first][neigbours.second].f > newf) {
 
-					map[neigbours.first][neigbours.second].f = f;
+					openlist.emplace(neigbours.first, neigbours.second, newf);
+					map[neigbours.first][neigbours.second].g = newg;
+					map[neigbours.first][neigbours.second].h = newh;
+					map[neigbours.first][neigbours.second].f = newf;
 					map[neigbours.first][neigbours.second].prevNode = { i,j };
-					openlist.emplace(neigbours.first, neigbours.second, f);
 				}
 			}
 		}
@@ -211,13 +233,15 @@ void build_path(const Pair &dim,const Pair &start, const Pair &finish, Node **ma
 {
 	int i = finish.first;
 	int j = finish.second;
-	int steps = 0;
+	
+	
+	std::stack<char> s;
+	s.push('F');
 	maze[start.first][start.second] = 'S';
 	maze[finish.first][finish.second] = 'F';
 
 	while (map[i][j].prevNode != start)
 	{
-		++steps;
 
 		auto tempPrev = map[i][j].prevNode;
 
@@ -235,7 +259,7 @@ void build_path(const Pair &dim,const Pair &start, const Pair &finish, Node **ma
 		j = tempPrev.second;
 	}
 
-	std::cout << steps<<" steps"<<std::endl;
+	std::cout << map[finish.first][finish.second].g << " steps" << std::endl;
 
 	for (int i = 0; i < dim.first; i++)
 	{
@@ -247,7 +271,6 @@ void build_path(const Pair &dim,const Pair &start, const Pair &finish, Node **ma
 	}
 
 }
-
 
 
 int manhattan_distance(const Pair &p, const Pair &pf)
